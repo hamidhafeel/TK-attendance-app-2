@@ -1,0 +1,57 @@
+{
+  "subjects": [
+    {
+      "id": "sub_1792926675126",
+      "name": "Community Medicine",
+      "code": "",
+      "target": 80,
+      "color": "#6366f1"
+    },
+    {
+      "id": "sub_1792926692090",
+      "name": "Forensic Medicine",
+      "code": "",
+      "target": 80,
+      "color": "#10b981"
+    },
+    {
+      "id": "sub_1792926704588",
+      "name": "Ophthalmology",
+      "code": "",
+      "target": 80,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "sub_1792926712839",
+      "name": "ENT",
+      "code": "",
+      "target": 80,
+      "color": "#ec4899"
+    },
+    {
+      "id": "sub_1792926721545",
+      "name": "Medicine",
+      "code": "",
+      "target": 80,
+      "color": "#06b6d4"
+    },
+    {
+      "id": "sub_1792926731106",
+      "name": "Surgery",
+      "code": "",
+      "target": 80,
+      "color": "#06b6d4"
+    },
+    {
+      "id": "sub_1792926753262",
+      "name": "OBG",
+      "code": "",
+      "target": 80,
+      "color": "#06b6d4"
+    }
+  ],
+  "attendance": {
+    "2026-10-25": {}
+  },
+  "lastUpdated": 1792926764060
+}

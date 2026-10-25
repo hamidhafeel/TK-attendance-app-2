@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>TK Attendance Tracker</title>
+    <!-- iOS Apple Touch Icon for Home Screen -->
+    <link rel="apple-touch-icon" href="new icon.jpeg">
+    <link rel="icon" type="image/jpeg" href="new icon.jpeg">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --card-border: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 16px;
+            padding-bottom: 90px;
+            display: flex;
+            justify-content: center;
+        }
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+        }
+        /* Header & Banner */
+        .header-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .banner-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+        .header-content {
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .app-title h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .app-title p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 14px;
+        }
+        .stat-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        .stat-value {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        .stat-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        /* Date Selector */
+        .date-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .date-nav-btn {
+            background: #334155;
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .date-display {
+            text-align: center;
+        }
+        .date-display input[type="date"] {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            color-scheme: dark;
+        }
+        .date-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        /* Section Title */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 0 4px;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        /* Subject Cards */
+        .subject-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        .subject-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+            background: var(--accent);
+        }
+        .subject-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        .subject-name {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .subject-status {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .subject-stats-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .subject-pct {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .subject-ratio {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        /* Logged Badges */
+        .logged-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        .log-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .log-badge.present {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+        .log-badge.absent {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+        .log-badge .del {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-left: 2px;
+        }
+        /* Action Buttons */
+        .action-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .btn {
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: opacity 0.2s;
+        }
+        .btn:active {
+            opacity: 0.7;
+        }
+        .btn-present {
+            background: #10b981;
+            color: white;
+        }
+        .btn-absent {
+            background: #ef4444;
+            color: white;
+        }
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #1e293b;
+            border-top: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+            z-index: 1000;
+        }
+        .nav-item {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+        }
+        .nav-item.active {
+            color: var(--accent);
+        }
+        .nav-item svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+        }
+        /* Views */
+        .view-content {
+            display: none;
+        }
+        .view-content.active {
+            display: block;
+        }
+        /* Calendar View */
+        .calendar-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .cal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            text-align: center;
+        }
+        .cal-day-name {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            padding-bottom: 6px;
+        }
+        .cal-day {
+            aspect-ratio: 1;
+            background: #0f172a;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        .cal-day.has-data {
+            border-color: var(--accent);
+        }
+        .cal-day.selected {
+            background: var(--accent);
+            color: white;
+        }
+        .cal-dots {
+            display: flex;
+            gap: 2px;
+            margin-top: 2px;
+        }
+        .cal-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+        }
+        .cal-dot.p { background: var(--success); }
+        .cal-dot.a { background: var(--danger); }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- MARK VIEW -->
+        <div id="view-mark" class="view-content active">
+            <!-- Header Banner -->
+            <div class="header-card">
+                <img src="WhatsApp Image 2026-10-25 at 3.29.24 PM.jpeg" alt="Profile" class="banner-img" onerror="this.src='new icon.jpeg'">
+                <div class="header-content">
+                    <div class="app-title">
+                        <h1>TK Attendance Tracker</h1>
+                        <p>Auto-saving locally</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Overview -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Overall Attendance</div>
+                    <div class="stat-value" id="overall-pct">0.0%</div>
+                    <div class="stat-sub" id="overall-status">No classes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Classes Attended</div>
+                    <div class="stat-value" id="overall-classes">0</div>
+                    <div class="stat-sub" id="overall-total">of 0 total</div>
+                </div>
+            </div>
+
+            <!-- Date Selector -->
+            <div class="date-card">
+                <button class="date-nav-btn" onclick="changeDate(-1)">‹</button>
+                <div class="date-display">
+                    <input type="date" id="attendance-date" onchange="onDateChanged()">
+                    <div class="date-sub" id="date-formatted">Today</div>
+                </div>
+                <button class="date-nav-btn" onclick="changeDate(1)">›</button>
+            </div>
+
+            <!-- Subject List -->
+            <div class="section-header">
+                <div class="section-title">Subjects</div>
+            </div>
+            <div id="subjects-container"></div>
+        </div>
+
+        <!-- CALENDAR VIEW -->
+        <div id="view-calendar" class="view-content">
+            <div class="header-card" style="padding: 16px; margin-bottom: 16px;">
+                <h1 style="font-size: 18px; font-weight: 700;">Attendance Calendar</h1>
+                <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Tap any date to inspect or edit attendance</p>
+            </div>
+            <div class="calendar-card">
+                <div class="cal-header">
+                    <button class="date-nav-btn" onclick="changeCalMonth(-1)">‹</button>
+                    <div id="cal-month-year" style="font-weight: 700; font-size: 15px;">October 2026</div>
+                    <button class="date-nav-btn" onclick="changeCalMonth(1)">›</button>
+                </div>
+                <div class="cal-grid" id="cal-days-header">
+                    <div class="cal-day-name">Su</div>
+                    <div class="cal-day-name">Mo</div>
+                    <div class="cal-day-name">Tu</div>
+                    <div class="cal-day-name">We</div>
+                    <div class="cal-day-name">Th</div>
+                    <div class="cal-day-name">Fr</div>
+                    <div class="cal-day-name">Sa</div>
+                </div>
+                <div class="cal-grid" id="cal-days-container" style="margin-top: 8px;"></div>
+            </div>
+            <div id="cal-selected-day-card"></div>
+        </div>
+
+        <!-- SUBJECTS MANAGEMENT VIEW -->
+        <div id="view-subjects" class="view-content">
+            <div class="header-card" style="padding: 16px; margin-bottom: 16px;">
+                <h1 style="font-size: 18px; font-weight: 700;">Manage Subjects</h1>
+                <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Add or edit your course list</p>
+            </div>
+            <div class="subject-card" style="margin-bottom: 16px;">
+                <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 10px;">Add New Subject</h3>
+                <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                    <input type="text" id="new-sub-name" placeholder="Subject Name" style="flex: 1; background: #0f172a; border: 1px solid var(--card-border); border-radius: 8px; padding: 10px; color: white; font-size: 14px;">
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px;">
+                    <label style="font-size: 13px; color: var(--text-muted);">Target %:</label>
+                    <input type="number" id="new-sub-target" value="80" min="1" max="100" style="width: 70px; background: #0f172a; border: 1px solid var(--card-border); border-radius: 8px; padding: 8px; color: white; font-size: 14px;">
+                </div>
+                <button class="btn btn-present" onclick="addNewSubject()" style="width: 100%;">Add Subject</button>
+            </div>
+            <div id="manage-subjects-list"></div>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAVIGATION BAR -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="switchTab('mark', this)">
+            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            Mark
+        </button>
+        <button class="nav-item" onclick="switchTab('calendar', this)">
+            <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+            Calendar
+        </button>
+        <button class="nav-item" onclick="switchTab('subjects', this)">
+            <svg viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
+            Subjects
+        </button>
+    </nav>
+
+    <script>
+        // Default Data Set
+        const DEFAULT_DATA = {
+            subjects: [
+                { id: "sub_1", name: "Community Medicine", target: 80, color: "#6366f1" },
+                { id: "sub_2", name: "Forensic Medicine", target: 80, color: "#10b981" },
+                { id: "sub_3", name: "Ophthalmology", target: 80, color: "#f59e0b" },
+                { id: "sub_4", name: "ENT", target: 80, color: "#ec4899" },
+                { id: "sub_5", name: "Medicine", target: 80, color: "#06b6d4" },
+                { id: "sub_6", name: "Surgery", target: 80, color: "#3b82f6" },
+                { id: "sub_7", name: "OBG", target: 80, color: "#8b5cf6" },
+                { id: "sub_8", name: "Paediatrics", target: 80, color: "#14b8a6" }
+            ],
+            attendance: {}
+        };
+
+        let appData = DEFAULT_DATA;
+        
+        // Robust local date string generator (ensures correct local date without UTC shifts)
+        function getLocalDateString(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        let currentDateStr = getLocalDateString(new Date());
+        let calYear = new Date().getFullYear();
+        let calMonth = new Date().getMonth();
+        let selectedCalDate = currentDateStr;
+
+        // Load data on startup
+        function loadAppData() {
+            const saved = localStorage.getItem('tk_attendance_data');
+            if (saved) {
+                try {
+                    appData = JSON.parse(saved);
+                } catch(e) {
+                    appData = DEFAULT_DATA;
+                }
+            } else {
+                appData = DEFAULT_DATA;
+                saveAppData();
+            }
+            // Ensure date input is populated immediately on startup
+            document.getElementById('attendance-date').value = currentDateStr;
+            renderAll();
+        }
+
+        function saveAppData() {
+            localStorage.setItem('tk_attendance_data', JSON.stringify(appData));
+            renderAll();
+        }
+
+        // Navigation & Views
+        function switchTab(tabId, el) {
+            document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.getElementById('view-' + tabId).classList.add('active');
+            el.classList.add('active');
+            if(tabId === 'calendar') renderCalendar();
+            if(tabId === 'subjects') renderManageSubjects();
+        }
+
+        function changeDate(days) {
+            const [y, m, d] = currentDateStr.split('-').map(Number);
+            const dateObj = new Date(y, m - 1, d);
+            dateObj.setDate(dateObj.getDate() + days);
+            currentDateStr = getLocalDateString(dateObj);
+            document.getElementById('attendance-date').value = currentDateStr;
+            renderMarkView();
+        }
+
+        function onDateChanged() {
+            const val = document.getElementById('attendance-date').value;
+            if(val) {
+                currentDateStr = val;
+                renderMarkView();
+            }
+        }
+
+        // Attendance Actions
+        function addAttendance(subId, status) {
+            if(!appData.attendance[currentDateStr]) {
+                appData.attendance[currentDateStr] = {};
+            }
+            if(!appData.attendance[currentDateStr][subId]) {
+                appData.attendance[currentDateStr][subId] = [];
+            }
+            appData.attendance[currentDateStr][subId].push(status);
+            saveAppData();
+        }
+
+        function removeAttendanceLog(subId, index) {
+            if(appData.attendance[currentDateStr] && appData.attendance[currentDateStr][subId]) {
+                appData.attendance[currentDateStr][subId].splice(index, 1);
+                if(appData.attendance[currentDateStr][subId].length === 0) {
+                    delete appData.attendance[currentDateStr][subId];
+                }
+                if(Object.keys(appData.attendance[currentDateStr]).length === 0) {
+                    delete appData.attendance[currentDateStr];
+                }
+                saveAppData();
+            }
+        }
+
+        function toggleAttendanceLog(subId, index) {
+            if(appData.attendance[currentDateStr] && appData.attendance[currentDateStr][subId]) {
+                const current = appData.attendance[currentDateStr][subId][index];
+                appData.attendance[currentDateStr][subId][index] = (current === 'P' ? 'A' : 'P');
+                saveAppData();
+            }
+        }
+
+        // Render Functions
+        function renderAll() {
+            const dateInput = document.getElementById('attendance-date');
+            if(dateInput && dateInput.value !== currentDateStr) {
+                dateInput.value = currentDateStr;
+            }
+            renderMarkView();
+            if(document.getElementById('view-calendar').classList.contains('active')) renderCalendar();
+            if(document.getElementById('view-subjects').classList.contains('active')) renderManageSubjects();
+        }
+
+        function renderMarkView() {
+            // Format Date subtitle safely
+            const [y, m, d] = currentDateStr.split('-').map(Number);
+            const dateObj = new Date(y, m - 1, d);
+            const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+            document.getElementById('date-formatted').innerText = dateObj.toLocaleDateString('en-US', options);
+
+            let totalClasses = 0;
+            let totalPresent = 0;
+
+            // Calculate overall stats across all dates
+            appData.subjects.forEach(sub => {
+                let subP = 0, subT = 0;
+                Object.keys(appData.attendance).forEach(date => {
+                    if(appData.attendance[date][sub.id]) {
+                        appData.attendance[date][sub.id].forEach(s => {
+                            subT++;
+                            if(s === 'P') subP++;
+                        });
+                    }
+                });
+                totalClasses += subT;
+                totalPresent += subP;
+            });
+
+            const overallPct = totalClasses > 0 ? ((totalPresent / totalClasses) * 100).toFixed(1) : '0.0';
+            document.getElementById('overall-pct').innerText = overallPct + '%';
+            document.getElementById('overall-classes').innerText = totalPresent;
+            document.getElementById('overall-total').innerText = `of ${totalClasses} total`;
+
+            let statusEl = document.getElementById('overall-status');
+            if(totalClasses === 0) {
+                statusEl.innerText = 'No classes recorded';
+                statusEl.style.color = 'var(--text-muted)';
+            } else if(parseFloat(overallPct) >= 80) {
+                statusEl.innerText = 'Safe Zone';
+                statusEl.style.color = 'var(--success)';
+            } else {
+                statusEl.innerText = 'Low Attendance';
+                statusEl.style.color = 'var(--danger)';
+            }
+
+            // Render Subjects list for current date
+            const container = document.getElementById('subjects-container');
+            container.innerHTML = '';
+
+            appData.subjects.forEach(sub => {
+                let subP = 0, subT = 0;
+                Object.keys(appData.attendance).forEach(date => {
+                    if(appData.attendance[date][sub.id]) {
+                        appData.attendance[date][sub.id].forEach(s => {
+                            subT++;
+                            if(s === 'P') subP++;
+                        });
+                    }
+                });
+
+                const pct = subT > 0 ? Math.round((subP / subT) * 100) : 0;
+                const logs = (appData.attendance[currentDateStr] && appData.attendance[currentDateStr][sub.id]) || [];
+
+                let card = document.createElement('div');
+                card.className = 'subject-card';
+                card.style.setProperty('--accent', sub.color || '#6366f1');
+
+                let logsHtml = '';
+                logs.forEach((status, idx) => {
+                    logsHtml += `<span class="log-badge ${status === 'P' ? 'present' : 'absent'}" onclick="toggleAttendanceLog('${sub.id}', ${idx})">#${idx+1} ${status}<span class="del" onclick="event.stopPropagation(); removeAttendanceLog('${sub.id}', ${idx})">×</span></span>`;
+                });
+
+                card.innerHTML = `
+                    <div class="subject-top">
+                        <div class="subject-name">${sub.name}</div>
+                        <div class="subject-status">${logs.length > 0 ? logs.length + ' logged today' : 'No logs today'}</div>
+                    </div>
+                    <div class="subject-stats-row">
+                        <div class="subject-pct">${pct}%</div>
+                        <div class="subject-ratio">${subP}/${subT} (${sub.target}% target)</div>
+                    </div>
+                    ${logs.length > 0 ? `<div class="logged-list">${logsHtml}</div>` : ''}
+                    <div class="action-row">
+                        <button class="btn btn-present" onclick="addAttendance('${sub.id}', 'P')">+ Present</button>
+                        <button class="btn btn-absent" onclick="addAttendance('${sub.id}', 'A')">+ Absent</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Calendar Logic
+        function changeCalMonth(dir) {
+            calMonth += dir;
+            if(calMonth > 11) { calMonth = 0; calYear++; }
+            if(calMonth < 0) { calMonth = 11; calYear--; }
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            document.getElementById('cal-month-year').innerText = `${monthNames[calMonth]} ${calYear}`;
+
+            const container = document.getElementById('cal-days-container');
+            container.innerHTML = '';
+
+            const firstDayIndex = new Date(calYear, calMonth, 1).getDay();
+            const totalDays = new Date(calYear, calMonth + 1, 0).getDate();
+
+            for(let i = 0; i < firstDayIndex; i++) {
+                let empty = document.createElement('div');
+                container.appendChild(empty);
+            }
+
+            for(let d = 1; d <= totalDays; d++) {
+                const monthStr = String(calMonth + 1).padStart(2, '0');
+                const dayStr = String(d).padStart(2, '0');
+                const dateKey = `${calYear}-${monthStr}-${dayStr}`;
+
+                let dayEl = document.createElement('div');
+                dayEl.className = 'cal-day';
+                if(dateKey === selectedCalDate) dayEl.classList.add('selected');
+
+                let dayLogs = appData.attendance[dateKey];
+                let hasData = dayLogs && Object.keys(dayLogs).length > 0;
+                if(hasData) dayEl.classList.add('has-data');
+
+                let dotsHtml = '<div class="cal-dots">';
+                if(hasData) {
+                    let countP = 0, countA = 0;
+                    Object.values(dayLogs).forEach(arr => {
+                        arr.forEach(s => { if(s==='P') countP++; else countA++; });
+                    });
+                    if(countP > 0) dotsHtml += `<div class="cal-dot p"></div>`;
+                    if(countA > 0) dotsHtml += `<div class="cal-dot a"></div>`;
+                }
+                dotsHtml += '</div>';
+
+                dayEl.innerHTML = `<span>${d}</span>${dotsHtml}`;
+                dayEl.onclick = () => {
+                    selectedCalDate = dateKey;
+                    renderCalendar();
+                };
+                container.appendChild(dayEl);
+            }
+            renderCalSelectedDay();
+        }
+
+        function renderCalSelectedDay() {
+            const card = document.getElementById('cal-selected-day-card');
+            const dayLogs = appData.attendance[selectedCalDate];
+            let html = `<div class="subject-card">` +
+                       `<div class="subject-name" style="margin-bottom:8px;">${selectedCalDate}</div>`;
+
+            if(!dayLogs || Object.keys(dayLogs).length === 0) {
+                html += `<div style="font-size:13px; color:var(--text-muted);">No attendance recorded for this date.</div>`;
+            } else {
+                html += `<div style="display:flex; flex-direction:column; gap:8px;">`;
+                Object.keys(dayLogs).forEach(subId => {
+                    const sub = appData.subjects.find(s => s.id === subId);
+                    const subName = sub ? sub.name : 'Unknown Subject';
+                    html += `<div style="font-size:13px;"><strong>${subName}:</strong> ${dayLogs[subId].join(', ')}</div>`;
+                });
+                html += `</div>`;
+            }
+            html += `<button class="btn btn-present" style="margin-top:12px; width:100%;" onclick="currentDateStr='${selectedCalDate}'; switchTab('mark', document.querySelectorAll('.nav-item')[0]);">Jump to Date & Edit</button>`;
+            html += `</div>`;
+            card.innerHTML = html;
+        }
+
+        // Subjects Management
+        function addNewSubject() {
+            const nameInput = document.getElementById('new-sub-name');
+            const targetInput = document.getElementById('new-sub-target');
+            const name = nameInput.value.trim();
+            const target = parseInt(targetInput.value) || 80;
+
+            if(!name) return;
+
+            const colors = ["#6366f1", "#10b981", "#f59e0b", "#ec4899", "#06b6d4", "#3b82f6", "#8b5cf6", "#14b8a6"];
+            const color = colors[appData.subjects.length % colors.length];
+
+            appData.subjects.push({
+                id: 'sub_' + Date.now(),
+                name: name,
+                target: target,
+                color: color
+            });
+
+            nameInput.value = '';
+            saveAppData();
+            renderManageSubjects();
+        }
+
+        function deleteSubject(subId) {
+            if(confirm('Are you sure you want to delete this subject?')) {
+                appData.subjects = appData.subjects.filter(s => s.id !== subId);
+                Object.keys(appData.attendance).forEach(date => {
+                    if(appData.attendance[date][subId]) {
+                        delete appData.attendance[date][subId];
+                    }
+                });
+                saveAppData();
+                renderManageSubjects();
+            }
+        }
+
+        function renderManageSubjects() {
+            const container = document.getElementById('manage-subjects-list');
+            container.innerHTML = '';
+
+            appData.subjects.forEach(sub => {
+                let card = document.createElement('div');
+                card.className = 'subject-card';
+                card.style.setProperty('--accent', sub.color || '#6366f1');
+                card.innerHTML = `
+                    <div class="subject-top">
+                        <div class="subject-name">${sub.name}</div>
+                        <button class="btn btn-absent" style="padding:6px 12px; font-size:11px;" onclick="deleteSubject('${sub.id}')">Delete</button>
+                    </div>
+                    <div style="font-size:13px; color:var(--text-muted); margin-top:4px;">Target Attendance: ${sub.target}%</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Initialize App on load
+        loadAppData();
+    </script>
+</body>
+</html>
